@@ -1,36 +1,36 @@
 #!/usr/bin/env bash
 print-usage()
 {
-    printf "Usage:\n\t%s <web_page>\n" "$(basename $0)" >&2
-    printf "\tweb_page: web page you want to check.\n" >&2
+	printf "Usage:\n\t%s <web_page>\n" "$(basename $0)" >&2
+	printf "\tweb_page: web page you want to check.\n" >&2
 }
 
 find_hosts()
 {
-    url="$1"
-    webpage=$(curl -sLo - "$url")
-    if [[ $? != 0 ]]; then
-	printf "Fetching web page error.\nQuit.\n" >&2
-	exit 2
-    fi
+	url="$1"
+	webpage=$(curl -sLo - "$url")
+	if [[ $? != 0 ]]; then
+		printf "Fetching web page error.\nQuit.\n" >&2
+		exit 2
+	fi
 
-    #regex='((?<=http://)|(?<=https://))([^/"?#'"'"']+\.)+[0-9A-Za-z]+'
-    regex='((?<=http://)|(?<=https://))([0-9A-Za-z]+\.)+[0-9A-Za-z]+'
-    webpage_converted=$(iconv -s -f gbk -t utf-8 <<<"$webpage")
-    if [[ $? != 0 ]]; then
-	printf "Converting web page source encoding error.\nTrying not to convert it.\n" >&2
-	grep -Po "$regex" <<<"$webpage" |sort |uniq
-    else
-	grep -Po "$regex" <<<"$webpage_converted" |sort |uniq
-    fi
+	#regex='((?<=http://)|(?<=https://))([^/"?#'"'"']+\.)+[0-9A-Za-z]+'
+	regex='((?<=http://)|(?<=https://))([0-9A-Za-z]+\.)+[0-9A-Za-z]+'
+	webpage_converted=$(iconv -s -f gbk -t utf-8 <<<"$webpage")
+	if [[ $? != 0 ]]; then
+		printf "Converting web page source encoding error.\nTrying not to convert it.\n" >&2
+		grep -Po "$regex" <<<"$webpage" |sort |uniq
+	else
+		grep -Po "$regex" <<<"$webpage_converted" |sort |uniq
+	fi
 }
 
 if [[ $# -eq 0 ]]; then
-    while read w; do
-	find_hosts "$w"
-    done
+	while read w; do
+		find_hosts "$w"
+	done
 else
-    for p in "$@"; do
-	find_hosts "$p"
-    done
+	for p in "$@"; do
+		find_hosts "$p"
+	done
 fi
