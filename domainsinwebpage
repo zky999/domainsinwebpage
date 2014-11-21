@@ -7,30 +7,30 @@ print-usage()
 
 find_hosts()
 {
-	url="$1"
+    url="$1"
     webpage=$(curl -sLo - "$url")
     if [[ $? != 0 ]]; then
-		printf "Fetching web page error.\nQuit.\n" >&2
-		exit 2
+	printf "Fetching web page error.\nQuit.\n" >&2
+	exit 2
     fi
 
-	#regex='((?<=http://)|(?<=https://))([^/"?#'"'"']+\.)+[0-9A-Za-z]+'
-	regex='((?<=http://)|(?<=https://))([0-9A-Za-z]+\.)+[0-9A-Za-z]+'
+    #regex='((?<=http://)|(?<=https://))([^/"?#'"'"']+\.)+[0-9A-Za-z]+'
+    regex='((?<=http://)|(?<=https://))([0-9A-Za-z]+\.)+[0-9A-Za-z]+'
     webpage_converted=$(iconv -s -f gbk -t utf-8 <<<"$webpage")
     if [[ $? != 0 ]]; then
-		printf "Converting web page source encoding error.\nTrying not to convert it.\n" >&2
-		grep -Po "$regex" <<<"$webpage" |sort |uniq
+	printf "Converting web page source encoding error.\nTrying not to convert it.\n" >&2
+	grep -Po "$regex" <<<"$webpage" |sort |uniq
     else
-		grep -Po "$regex" <<<"$webpage_converted" |sort |uniq
+	grep -Po "$regex" <<<"$webpage_converted" |sort |uniq
     fi
 }
 
 if [[ $# -eq 0 ]]; then
     while read w; do
-		find_hosts "$w"
+	find_hosts "$w"
     done
 else
     for p in "$@"; do
-		find_hosts "$p"
+	find_hosts "$p"
     done
 fi
